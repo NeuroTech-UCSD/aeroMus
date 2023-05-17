@@ -1,0 +1,25 @@
+name: psychopy
+channels: 
+ - conda-forge
+ - bioconda
+ - nodefaults
+dependencies: 
+ - python=3.8
+ - pandas 
+ - liblsl
+ - numpy
+ - scipy
+ - jupyterlab
+ - psychopy
+ - eeglabio
+ - sklearn
+ - pygame
+ - pip
+ - pip:
+  - psychtoolbox
+  - pygame
+  - pyo
+  - pyparallel; platform_system != "Windows"
+  - SoundFile; platform_system == "Windows"
+  - websocket_client
+  - pylsl
