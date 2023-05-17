@@ -86,7 +86,7 @@ def Paradigm(n):
     # Iterate through remaining sequence
     for i in range(0, len(sequence)):
         # Set LSL marker with current stim
-        mrk = pylsl.vectorstr([sequence[i]])
+        mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
         # Update texts
         cur.text = sequence[i]
         if i < len(sequence)-1:

@@ -1,3 +1,7 @@
-numpy
-matplotlib
-scipy
+psychtoolbox
+pygame
+pyo
+pyparallel; platform_system != "Windows"
+SoundFile; platform_system == "Windows"
+websocket_client
+pylsl
