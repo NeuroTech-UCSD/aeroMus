@@ -24,6 +24,8 @@ import numpy as np
 import psychopy 
 from psychopy import event
 from psychopy import visual
+import threading
+import sys
 
 from itertools import chain
 from math import atan2, degrees
@@ -39,12 +41,43 @@ fixation = None     # Global variable for fixation cross (Initialized in main)
 bg_color = [-1, -1, -1]
 win_w = 800
 win_h = 600
-refresh_rate = 144. # Monitor refresh rate (CRITICAL FOR TIMING)
-
+refresh_rate = 60. # Monitor refresh rate (CRITICAL FOR TIMING)
+prefix = None
+eeg_inlet = None
+session = None
+metadata = []
+timepoints = []
+'''metadata = {'C': [],
+            'T': [], 
+            'I': [],
+            'M': [], 
+            'R': [], 
+            'P': [],
+            'U': []}'''
 
 #========================================================
 # High Level Functions
 #========================================================
+def lsl_thread():
+    global eeg_inlet
+    global prefix 
+    
+    ch = 0
+    
+    print('LSL thread awake'); sys.stdout.flush();
+    
+    # Read LSL
+    while True:
+        sample, times = eeg_inlet.pull_sample()
+        # Append sample if exists (from single channel, ch) to file
+        if sample[ch] > 0:
+            out_path = prefix + "_data.txt"
+            with open(out_path,"a") as fo:
+                
+                fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
+    
+
+
 def Paradigm(n):
     global refresh_rate
     global win
@@ -53,6 +86,8 @@ def Paradigm(n):
     global triangle
     global mrkstream
     global bg_color
+    global metadata
+    global timepoints
     
     met_value = 0 # metronome value
     
@@ -86,7 +121,9 @@ def Paradigm(n):
     # Iterate through remaining sequence
     for i in range(0, len(sequence)):
         # Set LSL marker with current stim
-        mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
+        #mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
+        #print(mrk)
+        mrk = sequence[i]
         # Update texts
         cur.text = sequence[i]
         if i < len(sequence)-1:
@@ -106,13 +143,16 @@ def Paradigm(n):
             # Spend 1 beat (500ms) drawing text
             for frame in range(MsToFrames(500, refresh_rate)):
                 if frame == 0 and count == 0:
-                    mrkstream.push_sample(mrk);
+                    sample, times = eeg_inlet.pull_sample()
+                    timepoints.append(times)
+                    metadata.append(mrk) 
+                    #mrkstream.push_sample(mrk);
                 met.draw()
                 nxt.draw()
                 cur.draw()
                 win.flip()
         
-
+    return metadata
     
     '''
     for i, s in enumerate(sequence):
@@ -243,6 +283,12 @@ def CreateMrkStream():
     return outlet;
 
 if __name__ == "__main__":
+    # SET GLOBALS 
+    session = 1
+
+    prefix = "/Users/jfaybishenko/projects/TNT/Project-TNNI-ACD/data/eeg_recordings/sess{}/".format(session) + 'EMG'
+
+
     # Create PsychoPy window
     win = psychopy.visual.Window(
         screen = 0,
@@ -253,15 +299,28 @@ if __name__ == "__main__":
         gammaErrorPolicy = "ignore"
     );
     
-    # Initialize LSL marker stream
-    mrkstream = CreateMrkStream();
+
+    # Initialize LSL marker/ stream
+    # mrkstream = CreateMrkStream();
+    eeg_streams = pylsl.resolve_stream('type', 'EEG')
+    eeg_inlet = pylsl.stream_inlet(eeg_streams[0], recover = False)
+    print('Inlet Created'); sys.stdout.flush();
+    
+    # Launch LSL thread
+    lsl = threading.Thread(target = lsl_thread, args = ())
+    lsl.setDaemon(True) 
+    lsl.start()
     
     time.sleep(5)
     
-    # Initialize photosensor
-    #photosensor = InitPhotosensor(50)
-    #fixation = InitFixation(30)
+
 
     # Run through paradigm
-    Paradigm(10)
+    check = Paradigm(1)
     
+    out_path = prefix + "_metadata.txt"
+    with open(out_path,"a") as fo:
+        for i in range(len(timepoints)):
+            fo.write(metadata[i] + ', ')
+            fo.write(str(timepoints[i]))
+            fo.write('\n')
