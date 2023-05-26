@@ -47,13 +47,7 @@ eeg_inlet = None
 session = None
 metadata = []
 timepoints = []
-'''metadata = {'C': [],
-            'T': [], 
-            'I': [],
-            'M': [], 
-            'R': [], 
-            'P': [],
-            'U': []}'''
+
 
 #========================================================
 # High Level Functions
@@ -129,12 +123,12 @@ def Paradigm(n):
         if i < len(sequence)-1:
             nxt.text = sequence[i+1]
         else:
-            nxt.text = 'C'
+            nxt.text = 'End'
         
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
         nbeats = 4
-        if sequence[i] == 'U': #changed from C to U ***********************
+        if sequence[i] == 'Re': #changed from C to U ***********************
             nbeats = 8
         for count in range(nbeats):
             # Set metronome
@@ -208,8 +202,9 @@ def CreateSequence(n):
     #
     # Relaxed will always be between other movements
 
+
     seq = []
-    for i in ['C', 'T', 'I', 'M', 'R', 'P']:
+    for i in ['WrD', 'WrU', 'ClQ', 'ThO', 'PP', 'ClH', 'InU', 'InD', 'ThD', 'MiD', 'RiD', 'PiD']:
        seq.append([i for x in range(n)])
     seq = listFlatten(seq)
     random.seed()
@@ -218,7 +213,7 @@ def CreateSequence(n):
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.append('U') #changed from C to U ***********************
+       seq_.append('Re') #changed from C to U ***********************
        seq_.append(s)
         
     seq = None
@@ -226,7 +221,9 @@ def CreateSequence(n):
     # ________________________________________________________________
 
     # U = wrist up
-    # O = rest
+    # O = rest / open
+    # C = clench
+    # D = down 
     # T = thumb
     # I = index finger
     # M = middle finger
