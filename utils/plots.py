@@ -4,28 +4,23 @@ import sys
 sys.path.append('../')
 
 
-x_min, x_max = 0, 300
+x_min, x_max = 0, 100
 
-def plot_realtime_data(inlet, num_streams, frames=10000, interval=10):
-
-    import matplotlib.pyplot as plt
-    from matplotlib.animation import FuncAnimation
-    import numpy as np
-    import time
+def plot_realtime_data(inlet, num_streams):
+    global x_min, x_max, buffer_size
 
     # Set up the figure and axis
     fig, ax = plt.subplots()
     lines = []  # Create empty line objects for each stream
 
     # Set the plot properties
-    ax.set_xlim(x_min, x_max)  # Adjust the x-axis limits as needed
+    ax.set_xlim(0, 1000)  # Adjust the x-axis limits as needed
     ax.set_ylim(-200, 200)   # Adjust the y-axis limits as needed
     ax.set_xlabel('Time')
     ax.set_ylabel('Signal')
     ax.set_title('Real-time Data Plot')
 
     # Initialize the data
-    x_data = [[] for _ in range(num_streams)]
     y_data = [[] for _ in range(num_streams)]  # Create empty lists for each stream
 
     # Create the line objects for each stream
@@ -33,24 +28,29 @@ def plot_realtime_data(inlet, num_streams, frames=10000, interval=10):
         line, = ax.plot([], [])  # Create an empty line object for each stream
         lines.append(line)
 
-    # Function to update the plot with new data
-    def update_plot(frame):
-        global x_min, x_max
-        sample, _ = inlet.pull_sample()
-        for i in range(num_streams):
-            # Get the latest sample from each LSL stream
-            signal = sample[i]  # Modify this based on the structure of your LSL stream data
-            x_data[i].append(frame)
-            y_data[i].append(signal)
-            lines[i].set_data(x_data[i], y_data[i])
-        x_max += 1
-        x_min = max(0, x_max-400)
-        ax.set_xlim(x_min, x_max)
-
-        return lines
-
     # Start the real-time plotting
-    anim = FuncAnimation(fig, update_plot, frames=frames, interval=interval, blit=True)
+    plt.ion()  # Turn on interactive mode for continuous updating
+
+    c = 0
+    while True:
+        samples, _ = inlet.pull_chunk(max_samples=50)
+
+        if len(samples) > 0:
+            c += len(samples[0])
+
+            for i in range(num_streams):
+                # Get the latest sample from each LSL stream
+                signal = [samples[x][i] for x in range(len(samples))]  # Modify this based on the structure of your LSL stream data
+                y_data[i].extend(signal)
+                lines[i].set_data(range(c), y_data[i])
+
+            x_max += len(samples)
+            x_min = max(0, x_max-500)
+            ax.set_xlim(x_min, x_max)
+            ax.figure.canvas.draw()
+            plt.pause(0.01)  # Adjust the pause duration as needed for smooth updating
+
+    plt.ioff()
 
     # Update the legend with the stream labels
     legend_labels = [f'Stream {i+1}' for i in range(num_streams)]
