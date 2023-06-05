@@ -119,6 +119,7 @@ def plot_signal_epoch(data_filepath, metadata_filepath, behavior, channel_setup,
         for channels in channel_setup:
             # get channels of interest
             V_m, V_o = data[channels[0]], data[channels[1]]
+
             # get start and stop times for epoch/behavior
             start, stop = metadata.iloc[i,0], metadata.iloc[i + 1,0]
             # epoch the data
