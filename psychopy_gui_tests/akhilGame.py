@@ -4,14 +4,14 @@ from psychopy import visual, event, core
 win = visual.Window(size=(800, 600), fullscr=False)
 circle = visual.Circle(win, radius=0.1, fillColor='black')
 mouseText = visual.TextStim(win, text="mouse", pos=circle.pos, color='white', height = 0.05)
-square = visual.Rect(win, width = 0.1, height = 0.1, pos=(0,0), fillColor='yellow')
+square = visual.Rect(win, width = 0.1, height = 0.1, pos=(0,0.9), fillColor='yellow')
 cheeseText = visual.TextStim(win, text="cheese", pos=square.pos, color='black', height = 0.04)
 mouse = event.Mouse(win=win)
 kb = keyboard.Keyboard()
 
 while True:
     kb.clock.reset()
-    keys = kb.getKeys(['right', 'left', 'up', 'down', 'b','g', 'escape'], waitRelease=True)
+    keys = kb.getKeys(['right', 'left', 'up', 'down', 'b','g', 'escape'], waitRelease=False, clear=False)
     if 'escape' in keys:
         break
 
@@ -24,19 +24,23 @@ while True:
     elif mouse.isPressedIn(circle, buttons=[2]):
         circle.fillColor = 'red'
 
-    for key in keys:
-        if key == 'up':
-            square.pos += [0, 0.01]  # Move up
-        elif key == 'down':
-            square.pos += [0, -0.01]  # Move down
-        elif key == 'left':
-            square.pos += [-0.01, 0]  # Move left
-        elif key == 'right':
-            square.pos += [0.01, 0]  # Move right
-        elif key == 'b':
-            square.fillColor = 'green'
-        elif key == 'g':
-            square.fillColor = 'yellow'
+    if len(keys) > 0:
+        key = keys[len(keys)-1]
+        if not key.duration:
+            if key == 'up' and (square.pos[1] + 0.01 < 1):
+                square.pos += [0, 0.01] 
+            elif key == 'down' and (square.pos[1] - 0.01 > -1):
+                square.pos += [0, -0.01] 
+            elif key == 'left' and (square.pos[0] -0.01 > -1):
+                square.pos += [-0.01, 0] 
+            elif key == 'right' and (square.pos[0] + 0.01 < 1):
+                square.pos += [0.01, 0]
+            if key == 'b':
+                square.fillColor = 'green'
+            if key == 'g':
+                square.fillColor = 'yellow'
+        else:
+            square.pos += [0,0]
 
     cheeseText.pos = square.pos
     circle.pos = mouse_pos
