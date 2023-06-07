@@ -4,7 +4,7 @@ from psychopy import visual, event, core
 win = visual.Window(size=(800, 600), fullscr=False)
 circle = visual.Circle(win, radius=0.1, fillColor='black')
 mouseText = visual.TextStim(win, text="mouse", pos=circle.pos, color='white', height = 0.05)
-square = visual.Rect(win, width = 0.1, height = 0.1, pos=(0,0.9), fillColor='yellow')
+square = visual.Rect(win, width = 0.1, height = 0.1, pos=(0,0), fillColor='yellow')
 cheeseText = visual.TextStim(win, text="cheese", pos=square.pos, color='black', height = 0.04)
 mouse = event.Mouse(win=win)
 kb = keyboard.Keyboard()
@@ -39,8 +39,6 @@ while True:
                 square.fillColor = 'green'
             if key == 'g':
                 square.fillColor = 'yellow'
-        else:
-            square.pos += [0,0]
 
     cheeseText.pos = square.pos
     circle.pos = mouse_pos
