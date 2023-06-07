@@ -41,7 +41,7 @@ fixation = None     # Global variable for fixation cross (Initialized in main)
 bg_color = [-1, -1, -1]
 win_w = 800
 win_h = 600
-refresh_rate = 60. # Monitor refresh rate (CRITICAL FOR TIMING)
+refresh_rate = 120. # Monitor refresh rate (CRITICAL FOR TIMING)
 prefix = None
 eeg_inlet = None
 session = None
@@ -55,20 +55,16 @@ timepoints = []
 def lsl_thread():
     global eeg_inlet
     global prefix 
-    
-    ch = 0
-    
+
+    out_path = prefix + "_data.txt"
     print('LSL thread awake'); sys.stdout.flush();
     
     # Read LSL
     while True:
         sample, times = eeg_inlet.pull_sample()
         # Append sample if exists (from single channel, ch) to file
-        if sample[ch] > 0:
-            out_path = prefix + "_data.txt"
-            with open(out_path,"a") as fo:
-                
-                fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
+        with open(out_path,"a") as fo:
+            fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
     
 
 
@@ -127,9 +123,9 @@ def Paradigm(n):
         
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
-        nbeats = 4
+        nbeats = 5
         if sequence[i] == 'Re': #changed from C to U ***********************
-            nbeats = 8
+            nbeats = 6
         for count in range(nbeats):
             # Set metronome
             met.text = f'{count + 1}'
@@ -213,7 +209,7 @@ def CreateSequence(n):
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.append('Re') #changed from C to U ***********************
+       seq_.append('Re') #changed from C to U to Re ***********************
        seq_.append(s)
         
     seq = None
@@ -280,8 +276,10 @@ def CreateMrkStream():
     return outlet;
 
 if __name__ == "__main__":
+    # TODO: updaute two variables here every round 
     # SET GLOBALS 
-    session = 1
+    session = 3
+    paradigm_repeats = 2
 
     prefix = "/Users/jfaybishenko/projects/TNT/Project-TNNI-ACD/data/eeg_recordings/sess{}/".format(session) + 'EMG'
 
@@ -291,7 +289,7 @@ if __name__ == "__main__":
         screen = 0,
         size=[win_w, win_h],
         units="pix",
-        fullscr=False,
+        fullscr=True,
         color=bg_color,
         gammaErrorPolicy = "ignore"
     );
@@ -313,7 +311,7 @@ if __name__ == "__main__":
 
 
     # Run through paradigm
-    check = Paradigm(1)
+    check = Paradigm(paradigm_repeats)
     
     out_path = prefix + "_metadata.txt"
     with open(out_path,"a") as fo:
