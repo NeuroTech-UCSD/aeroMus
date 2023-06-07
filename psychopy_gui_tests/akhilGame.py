@@ -2,8 +2,8 @@ from psychopy.hardware import keyboard
 from psychopy import visual, event, core
 
 win = visual.Window(size=(800, 600), fullscr=False)
-circle = visual.Circle(win, radius=0.1, fillColor='black')
-mouseText = visual.TextStim(win, text="mouse", pos=circle.pos, color='white', height = 0.05)
+circle = visual.Circle(win, radius=0.1, fillColor='mouse')
+mouseText = visual.TextStim(win, text="mouse", pos=circle.pos, color='black', height = 0.05)
 square = visual.Rect(win, width = 0.1, height = 0.1, pos=(0,0), fillColor='yellow')
 cheeseText = visual.TextStim(win, text="cheese", pos=square.pos, color='black', height = 0.04)
 mouse = event.Mouse(win=win)
@@ -11,10 +11,15 @@ kb = keyboard.Keyboard()
 currPressed = []
 timer = core.Clock()
 
-def checkClick(stim):
-    if mouse.isPressedIn(stim):
+def checkClick(stim, textStim):
+    if mouse.isPressedIn(stim, buttons=[1]) and timer.getTime() < 10:
         square.fillColor = 'white'
-        print("ate cheese")
+        print("you ate the cheese")
+    elif mouse.isPressedIn(stim, buttons=[1]) and timer.getTime() > 10:
+        circle.fillColor = 'black'
+        textStim.color = 'white'
+        textStim.text = 'Dead mouse'
+        print("you ate spoiled cheese & died")
 
 while True:
     leftClick = False
@@ -55,8 +60,6 @@ while True:
     button = mouse.getPressed()
     if mouse.isPressedIn(circle, buttons=[0]) or leftClick == True:
         circle.fillColor = 'blue'
-    elif mouse.isPressedIn(circle, buttons=[1]) or middleClick == True:
-        circle.fillColor = 'green'
     elif mouse.isPressedIn(circle, buttons=[2]) or rightClick == True:
         circle.fillColor = 'red'        
 
@@ -64,7 +67,7 @@ while True:
     circle.pos = mouse_pos
     mouseText.pos = mouse_pos
 
-    checkClick(square)
+    checkClick(square, mouseText)
     square.draw()
     cheeseText.draw()
     circle.draw()
