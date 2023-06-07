@@ -24,6 +24,8 @@ import numpy as np
 import psychopy 
 from psychopy import event
 from psychopy import visual
+import threading
+import sys
 
 from itertools import chain
 from math import atan2, degrees
@@ -39,12 +41,33 @@ fixation = None     # Global variable for fixation cross (Initialized in main)
 bg_color = [-1, -1, -1]
 win_w = 800
 win_h = 600
-refresh_rate = 144. # Monitor refresh rate (CRITICAL FOR TIMING)
+refresh_rate = 120. # Monitor refresh rate (CRITICAL FOR TIMING)
+prefix = None
+eeg_inlet = None
+session = None
+metadata = []
+timepoints = []
 
 
 #========================================================
 # High Level Functions
 #========================================================
+def lsl_thread():
+    global eeg_inlet
+    global prefix 
+
+    out_path = prefix + "_data.txt"
+    print('LSL thread awake'); sys.stdout.flush();
+    
+    # Read LSL
+    while True:
+        sample, times = eeg_inlet.pull_sample()
+        # Append sample if exists (from single channel, ch) to file
+        with open(out_path,"a") as fo:
+            fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
+    
+
+
 def Paradigm(n):
     global refresh_rate
     global win
@@ -53,6 +76,8 @@ def Paradigm(n):
     global triangle
     global mrkstream
     global bg_color
+    global metadata
+    global timepoints
     
     met_value = 0 # metronome value
     
@@ -86,19 +111,21 @@ def Paradigm(n):
     # Iterate through remaining sequence
     for i in range(0, len(sequence)):
         # Set LSL marker with current stim
-        mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
+        #mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
+        #print(mrk)
+        mrk = sequence[i]
         # Update texts
         cur.text = sequence[i]
         if i < len(sequence)-1:
             nxt.text = sequence[i+1]
         else:
-            nxt.text = 'C'
+            nxt.text = 'End'
         
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
-        nbeats = 4
-        if sequence[i] == 'U': #changed from C to U ***********************
-            nbeats = 8
+        nbeats = 5
+        if sequence[i] == 'Re': #changed from C to U ***********************
+            nbeats = 6
         for count in range(nbeats):
             # Set metronome
             met.text = f'{count + 1}'
@@ -106,13 +133,16 @@ def Paradigm(n):
             # Spend 1 beat (500ms) drawing text
             for frame in range(MsToFrames(500, refresh_rate)):
                 if frame == 0 and count == 0:
-                    mrkstream.push_sample(mrk);
+                    sample, times = eeg_inlet.pull_sample()
+                    timepoints.append(times)
+                    metadata.append(mrk) 
+                    #mrkstream.push_sample(mrk);
                 met.draw()
                 nxt.draw()
                 cur.draw()
                 win.flip()
         
-
+    return metadata
     
     '''
     for i, s in enumerate(sequence):
@@ -168,8 +198,9 @@ def CreateSequence(n):
     #
     # Relaxed will always be between other movements
 
+
     seq = []
-    for i in ['C', 'T', 'I', 'M', 'R', 'P']:
+    for i in ['WrD', 'WrU', 'ClQ', 'ThO', 'PP', 'ClH', 'InU', 'InD', 'ThD', 'MiD', 'RiD', 'PiD']:
        seq.append([i for x in range(n)])
     seq = listFlatten(seq)
     random.seed()
@@ -178,7 +209,7 @@ def CreateSequence(n):
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.append('U') #changed from C to U ***********************
+       seq_.append('Re') #changed from C to U to Re ***********************
        seq_.append(s)
         
     seq = None
@@ -186,7 +217,9 @@ def CreateSequence(n):
     # ________________________________________________________________
 
     # U = wrist up
-    # O = rest
+    # O = rest / open
+    # C = clench
+    # D = down 
     # T = thumb
     # I = index finger
     # M = middle finger
@@ -243,25 +276,46 @@ def CreateMrkStream():
     return outlet;
 
 if __name__ == "__main__":
+    # TODO: updaute two variables here every round 
+    # SET GLOBALS 
+    session = 3
+    paradigm_repeats = 2
+
+    prefix = "/Users/jfaybishenko/projects/TNT/Project-TNNI-ACD/data/eeg_recordings/sess{}/".format(session) + 'EMG'
+
+
     # Create PsychoPy window
     win = psychopy.visual.Window(
         screen = 0,
         size=[win_w, win_h],
         units="pix",
-        fullscr=False,
+        fullscr=True,
         color=bg_color,
         gammaErrorPolicy = "ignore"
     );
     
-    # Initialize LSL marker stream
-    mrkstream = CreateMrkStream();
+
+    # Initialize LSL marker/ stream
+    # mrkstream = CreateMrkStream();
+    eeg_streams = pylsl.resolve_stream('type', 'EEG')
+    eeg_inlet = pylsl.stream_inlet(eeg_streams[0], recover = False)
+    print('Inlet Created'); sys.stdout.flush();
+    
+    # Launch LSL thread
+    lsl = threading.Thread(target = lsl_thread, args = ())
+    lsl.setDaemon(True) 
+    lsl.start()
     
     time.sleep(5)
     
-    # Initialize photosensor
-    #photosensor = InitPhotosensor(50)
-    #fixation = InitFixation(30)
+
 
     # Run through paradigm
-    Paradigm(10)
+    check = Paradigm(paradigm_repeats)
     
+    out_path = prefix + "_metadata.txt"
+    with open(out_path,"a") as fo:
+        for i in range(len(timepoints)):
+            fo.write(metadata[i] + ', ')
+            fo.write(str(timepoints[i]))
+            fo.write('\n')
