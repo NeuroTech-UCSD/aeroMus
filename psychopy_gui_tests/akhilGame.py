@@ -11,6 +11,11 @@ kb = keyboard.Keyboard()
 currPressed = []
 timer = core.Clock()
 
+def checkClick(stim):
+    if mouse.isPressedIn(stim):
+        square.fillColor = 'white'
+        print("ate cheese")
+
 while True:
     leftClick = False
     middleClick = False
@@ -20,14 +25,11 @@ while True:
     keys = kb.getKeys(waitRelease=False, clear=False)
     if 'escape' in keys:
         break
-
+    currPressed = []
     mouse_pos = mouse.getPos()
 
     for key in keys:
         currPressed.append(key)
-    
-    for key in currPressed:
-        currPressed.remove(key)
 
     for key in currPressed:
         if not key.duration:
@@ -62,6 +64,7 @@ while True:
     circle.pos = mouse_pos
     mouseText.pos = mouse_pos
 
+    checkClick(square)
     square.draw()
     cheeseText.draw()
     circle.draw()
