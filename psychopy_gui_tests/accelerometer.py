@@ -17,6 +17,9 @@ buffer_z = []
 def lsl_thread():
     global eeg_inlet
     global prefix 
+    global buffer_x
+    global buffer_y
+    global buffer_z
     
     ch = 0
     
@@ -28,9 +31,9 @@ def lsl_thread():
         # Append sample if exists (from single channel, ch) to file
         if sample[ch] > 0:
             out_path = prefix + "_data.txt"
-            with open(out_path,"a") as fo:
-                fo.write(str(sample))
-                fo.write("\n")
+            '''buffer_x.append(sample[0])
+            buffer_y.append(sample[1])
+            buffer_z.append(sample[2])'''
                 #fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
 
 
