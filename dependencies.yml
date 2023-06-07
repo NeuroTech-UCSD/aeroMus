@@ -12,6 +12,4 @@ dependencies:
  - jupyterlab
  - psychopy
  - eeglabio
- - sklearn
  - pygame
- - pip
