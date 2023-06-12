@@ -34,13 +34,22 @@ while True:
             if key == 'left' and (square.pos[0] -0.01 > -1):
                 square.pos += [-0.01, 0] 
             elif key == 'right' and (square.pos[0] + 0.01 < 1):
-                square.pos += [0.01, 0] 
+                square.pos += [0.01, 0]
+            elif key == 'q':
+                leftClick = True
+            elif key == 'w':
+                middleClick = True
+            elif key == 'e':
+                rightClick = True
 
+    #Left click should turn blue. middle click (on the square) should turn green
+    #right click should turn it red. However, I am trying to simulate mouse clicks with something else.
+    #current practice is a key press
     button = mouse.getPressed()
     if mouse.isPressedIn(circle, buttons=[0]) or leftClick == True:
         circle.fillColor = 'blue'
-    elif mouse.isPressedIn(circle, buttons=[1]) or middleClick == True:
-        circle.fillColor = 'green'
+    elif middleClick == True or mouse.isPressedIn(square, buttons=[1]):
+            circle.fillColor = 'green'
     elif mouse.isPressedIn(circle, buttons=[2]) or rightClick == True:
         circle.fillColor = 'red'        
 
