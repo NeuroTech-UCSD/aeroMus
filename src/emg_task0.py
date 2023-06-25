@@ -41,7 +41,7 @@ fixation = None     # Global variable for fixation cross (Initialized in main)
 bg_color = [-1, -1, -1]
 win_w = 800
 win_h = 600
-refresh_rate = 120. # Monitor refresh rate (CRITICAL FOR TIMING)
+refresh_rate = 60. # Monitor refresh rate (CRITICAL FOR TIMING)
 prefix = None
 eeg_inlet = None
 session = None
@@ -87,7 +87,7 @@ def Paradigm(n):
     # Initialize metronome, primary and secondary text
     met = psychopy.visual.TextStim(win, text = 'X', units = 'norm', alignText = 'center');
     met.setHeight(0.1);
-    met.pos = (-0.1, 0)
+    met.pos = (-0.4, 0)
     met.draw()
     
     # Initialize current instruction
@@ -101,7 +101,7 @@ def Paradigm(n):
     nxt.setHeight(0.1);
     nxt.pos = (0, -0.1)
     nxt.draw()
-    
+
     # set text to be appropriate sequences
     #cur.text = sequence[0]
     #nxt.text = sequence[1]
@@ -114,6 +114,7 @@ def Paradigm(n):
         #mrk = pylsl.vectorstr([sequence[i]]) # TODO LOOK HERE
         #print(mrk)
         mrk = sequence[i]
+
         # Update texts
         cur.text = sequence[i]
         if i < len(sequence)-1:
@@ -123,16 +124,16 @@ def Paradigm(n):
         
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
-        nbeats = 5
-        if sequence[i] == 'Re': #changed from C to U ***********************
-            nbeats = 6
-        for count in range(nbeats):
+        nbeats = 1
+        if sequence[i] == 'REST' or sequence[i][:4] == 'HOLD': #changed from C to U ***********************
+            nbeats = 4
+        for count in range(nbeats, 0, -1):
             # Set metronome
-            met.text = f'{count + 1}'
+            met.text = f'{count}'
             
             # Spend 1 beat (500ms) drawing text
-            for frame in range(MsToFrames(500, refresh_rate)):
-                if frame == 0 and count == 0:
+            for frame in range(MsToFrames(1000, refresh_rate)):
+                if frame == 0 and count == nbeats:
                     sample, times = eeg_inlet.pull_sample()
                     timepoints.append(times)
                     metadata.append(mrk) 
@@ -198,19 +199,21 @@ def CreateSequence(n):
     #
     # Relaxed will always be between other movements
 
+    # ['WrD', 'WrU', 'ClQ', 'ThO', 'PP', 'ClH', 'InU', 'InD', 'ThD', 'MiD', 'RiD', 'PiD']
+    movements = ['CLENCH']
 
-    seq = []
-    for i in ['WrD', 'WrU', 'ClQ', 'ThO', 'PP', 'ClH', 'InU', 'InD', 'ThD', 'MiD', 'RiD', 'PiD']:
-       seq.append([i for x in range(n)])
-    seq = listFlatten(seq)
+    seq = movements*n
+    # for i in ['Clench','Tinca']:
+    #    seq.append([i for x in range(n)])
+    # seq = listFlatten(seq)
+
     random.seed()
     random.shuffle(seq) # shuffles in-place
     
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.append('Re') #changed from C to U to Re ***********************
-       seq_.append(s)
+       seq_.extend(['REST', s, 'HOLD ' + s, 'STOP ' + s]) #changed from C to U to Re ***********************
         
     seq = None
 
@@ -278,10 +281,10 @@ def CreateMrkStream():
 if __name__ == "__main__":
     # TODO: updaute two variables here every round 
     # SET GLOBALS 
-    session = 3
-    paradigm_repeats = 2
+    session = 1
+    paradigm_repeats = 10
 
-    prefix = "/Users/jfaybishenko/projects/TNT/Project-TNNI-ACD/data/eeg_recordings/sess{}/".format(session) + 'EMG'
+    prefix = "/Users/soysa/Documents/Git/Project-TNNI-ACD/data/emg_recordings/test_sess{}".format(session) # + 'EMG'
 
 
     # Create PsychoPy window
@@ -293,17 +296,17 @@ if __name__ == "__main__":
         color=bg_color,
         gammaErrorPolicy = "ignore"
     );
-    
 
     # Initialize LSL marker/ stream
     # mrkstream = CreateMrkStream();
+
     eeg_streams = pylsl.resolve_stream('type', 'EEG')
     eeg_inlet = pylsl.stream_inlet(eeg_streams[0], recover = False)
     print('Inlet Created'); sys.stdout.flush();
     
     # Launch LSL thread
     lsl = threading.Thread(target = lsl_thread, args = ())
-    lsl.setDaemon(True) 
+    lsl.setDaemon(True)
     lsl.start()
     
     time.sleep(5)
@@ -311,11 +314,11 @@ if __name__ == "__main__":
 
 
     # Run through paradigm
-    check = Paradigm(paradigm_repeats)
-    
+    metadata = Paradigm(paradigm_repeats)
+
     out_path = prefix + "_metadata.txt"
     with open(out_path,"a") as fo:
         for i in range(len(timepoints)):
-            fo.write(metadata[i] + ', ')
-            fo.write(str(timepoints[i]))
+            fo.write(str(timepoints[i]) + ', ')
+            fo.write(metadata[i])
             fo.write('\n')
