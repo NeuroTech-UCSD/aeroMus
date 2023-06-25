@@ -1,5 +1,8 @@
 from psychopy.hardware import keyboard
 from psychopy import visual, event, core
+import threading
+import sys
+
 
 win = visual.Window(size=(800, 600), fullscr=False)
 circle = visual.Circle(win, radius=0.1, fillColor='black')
