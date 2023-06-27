@@ -72,18 +72,18 @@ def lsl_thread():
             fo.write(f"{str(times)}, {str(sample)[1:-1]}\n")
         
         '''# pull a 3 second chunk from the inlet and write to file:
-        chunk, timestamps = eeg_inlet.pull_chunk(timeout=3)
+        chunk, timestamps = eeg_inlet.pull_chunk(timeout=0.5)
 
-        with open(out_path,"a") as fo:
-            '''# call aidan's function here: 
-            chunk_np = np.array(chunk)
-            chunk_zm = chunk_np - np.mean(chunk_np, axis=0)
-            chunk_rms = np.sqrt(np.mean(chunk_zm**2, axis=0))
-            if chunk_rms > 100:
-                clench_state = not clench_state'''
-            for i in range(len(chunk)):
+        #with open(out_path,"a") as fo:
+            # call aidan's function here: 
+        chunk_np = np.array(chunk)
+        chunk_zm = chunk_np[:,2] - np.mean(chunk_np[:,2])
+        chunk_rms = np.sqrt(np.mean(chunk_zm**2))
+        if np.mean(chunk_rms) > 100:
+            clench_state = not clench_state
+            '''for i in range(len(chunk)):
                 sample = chunk[i]
-                fo.write(str(timestamps[i]) + ", " + str(sample)[1:-1] + "\n")
+                fo.write(str(timestamps[i]) + ", " + str(sample)[1:-1] + "\n")'''
             
     
 
@@ -124,10 +124,10 @@ def Paradigm(n):
     nxt.draw()
 
     # Initialize clench state text
-    #clench = psychopy.visual.TextStim(win, text = str(clench_state), units = 'norm', alignText = 'center', color = (0.05, 0.05, 0.05));
-    #clench.setHeight(0.1);
-    #clench.pos = (0.3, 0.3)
-    #clench.draw()
+    clench = psychopy.visual.TextStim(win, text = str(clench_state), units = 'norm', alignText = 'center');
+    clench.setHeight(0.1);
+    clench.pos = (0.3, 0.3)
+    clench.draw()
 
     # set text to be appropriate sequences
     #cur.text = sequence[0]
@@ -158,6 +158,7 @@ def Paradigm(n):
             # Set metronome
             met.text = f'{count}'
             
+            
             # Spend 1 beat (500ms) drawing text
             for frame in range(MsToFrames(1000, refresh_rate)):
                 if frame == 0 and count == nbeats:
@@ -165,10 +166,12 @@ def Paradigm(n):
                     timepoints.append(times)
                     metadata.append(mrk) 
                     #mrkstream.push_sample(mrk);
+
+                clench.text = str(clench_state)
                 met.draw()
                 nxt.draw()
                 cur.draw()
-                #clench.draw()
+                clench.draw()
                 win.flip()
 
         
@@ -311,7 +314,7 @@ if __name__ == "__main__":
     # TODO: updaute two variables here every round 
     # SET GLOBALS 
     session = 1
-    paradigm_repeats = 1
+    paradigm_repeats = 3
 
     prefix = "//Users/jfaybishenko/projects/TNT/Project-TNNI-ACD/data/eeg_recordings/sess{}".format(session) # + 'EMG'
 
@@ -346,9 +349,9 @@ if __name__ == "__main__":
     metadata = Paradigm(paradigm_repeats)
     
 
-    out_path = prefix + "_metadata.txt"
+    '''out_path = prefix + "_metadata.txt"
     with open(out_path,"a") as fo:
         for i in range(len(timepoints)):
             fo.write(str(timepoints[i]) + ', ')
             fo.write(metadata[i])
-            fo.write('\n')
+            fo.write('\n')'''
