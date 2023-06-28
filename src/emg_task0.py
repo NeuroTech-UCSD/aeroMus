@@ -125,7 +125,7 @@ def Paradigm(n):
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
         nbeats = 1
-        if sequence[i] == 'REST' or sequence[i][:4] == 'HOLD': #changed from C to U ***********************
+        if sequence[i] == 'REST' or sequence[i] == 'HOLD': #changed from C to U ***********************
             nbeats = 4
         for count in range(nbeats, 0, -1):
             # Set metronome
@@ -199,8 +199,9 @@ def CreateSequence(n):
     #
     # Relaxed will always be between other movements
 
-    # ['WrD', 'WrU', 'ClQ', 'ThO', 'PP', 'ClH', 'InU', 'InD', 'ThD', 'MiD', 'RiD', 'PiD']
-    movements = ['CLENCH']
+    # change movements here
+    movements = ['FLEX WRIST', 'EXTEND WRIST', 'PRONATE WRIST', 'SUPINATE WRIST', 'CLENCH FIST',
+    			'EXTEND THUMB', 'EXTEND INDEX', 'EXTEND PINKY', 'PINCH']
 
     seq = movements*n
     # for i in ['Clench','Tinca']:
@@ -213,7 +214,7 @@ def CreateSequence(n):
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.extend(['REST', s, 'HOLD ' + s, 'STOP ' + s]) #changed from C to U to Re ***********************
+       seq_.extend(['REST', s, 'HOLD', 'STOP']) #changed from C to U to Re ***********************
         
     seq = None
 
