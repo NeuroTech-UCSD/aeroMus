@@ -51,6 +51,20 @@ def median_frequency(power, freqs):
     
     return mdf
 
+def calculate_average_power(power, freqs, n):
+    num_bands = n
+    band_power = []
+    band_size = len(freqs) // num_bands
+
+    for i in range(num_bands):
+        start_index = i * band_size
+        end_index = (i + 1) * band_size
+
+        # Calculate the average power within the band
+        powpow = np.mean(power[start_index:end_index])
+        band_power.append(powpow)
+
+    return band_power
 
 
 
