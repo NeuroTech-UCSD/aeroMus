@@ -1,0 +1,3 @@
+[submodule "src/MPU9255/lib/MPU925X"]
+	path = src/MPU9255/lib/MPU925X
+	url = git@github.com:dylanlyu/MPU925X.git
