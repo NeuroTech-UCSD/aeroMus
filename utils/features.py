@@ -66,3 +66,23 @@ def calculate_wavelet_coefficients(data, wavelet='morl'):
 
 
 ### Other
+
+def filter_emg(sig, fs):
+
+    m = pep.wrappers.EMGMeasurement(sig, hz=fs)
+
+    m.apply_dc_offset_remover()
+
+    #m.apply_bandpass_filter(bf_cutoff_fq_hi=fs/2 - 1)
+
+    #m.apply_full_wave_rectifier()
+
+    #m.apply_linear_envelope()
+
+    #m.apply_end_frame_cutter(n_end_frames=2)
+
+    #m.apply_amplitude_normalizer(max_amplitude=8.5)
+
+    #m.apply_segmenter(beg_ts=0, end_ts=0.015)
+
+    return m.data
