@@ -16,8 +16,10 @@ import pyautogui
 import pylsl
 import argparse
 from collections import deque
-from ..utils.signal_processing import *
-from ..utils.features import *
+
+sys.path.append('utils')
+from signal_processing import *
+from features import *
 
 acc_inlet = None
 emg_inlet = None
@@ -61,7 +63,7 @@ def acc_lsl_thread():
     while True:
         if clench:
             sample, times = acc_inlet.pull_sample()
-            pyautogui.move(-1 * sample[0]*scale, -1 * sample[1] * scale)
+            pyautogui.move(sample[0]*scale, sample[1] * scale)
 
 def emg_lsl_thread():
     """
@@ -89,10 +91,12 @@ def emg_lsl_thread():
                     continue
                 else:
                     clench = False 
+                    print("Resting")
                     continue 
             # if not clenching, look for other predictions 
             if prediction == CLENCH_TRUE:
-                pyautogui.click()
+                clench = True
+                print("Clenching")
             else:
                 continue
             '''elif prediction == RCLICK:
