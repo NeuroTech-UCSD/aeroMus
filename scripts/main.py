@@ -42,6 +42,7 @@ def processing_function(chunk):
     e4 = filter_emg(tripolar_laplacian(chunk[:, 7], chunk[:, 6]), FS)
 
     metric = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
+    print(metric)
     if metric > THRESHOLD:
         return CLENCH_TRUE
     else:
@@ -107,8 +108,8 @@ def emg_lsl_thread():
 
 
         
-def validation(time, sensitivity):
-    assert time > 0, "Time must be greater than 0"
+def validation(runtime, sensitivity):
+    assert runtime > 0, "Time must be greater than 0"
     assert sensitivity > 0, "Sensitivity must be greater than 0"
     return True
 
@@ -130,11 +131,11 @@ if __name__ == "__main__":
     # Parse the command line arguments
     args = parser.parse_args()
     sensitivity = args.sensitivity
-    time = args.time
+    runtime = args.time
 
 
     #validate input
-    validation(time, sensitivity)
+    validation(runtime, sensitivity)
 
     # Set global variables 
     scale = sensitivity * 2 
@@ -165,5 +166,5 @@ if __name__ == "__main__":
     emg_lsl.start()
     
     # Wait for time to pass and then exit
-    time.sleep(time)
+    time.sleep(runtime)
     print('Time is up!'); sys.stdout.flush();
