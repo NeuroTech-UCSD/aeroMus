@@ -32,7 +32,7 @@ def peak_frequencies(power, freqs):
     return freqs[peak_indices]
 
 def mean_frequency(power, freqs):
-    return np.sum(freqs*power)/np.sum(psd)
+    return np.sum(freqs*power)/np.sum(power)
 
 def median_frequency(power, freqs):
     # Sort the power spectrum and frequencies in ascending order
