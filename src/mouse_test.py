@@ -13,7 +13,8 @@ pyautogui.click(100, 200)  # Move the mouse to XY coordinates and click it.
 
 pyautogui.move(400, 0)      # Move the mouse 400 pixels to the right of its current position.
 pyautogui.doubleClick()     # Double click the mouse.
-pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.easeInOutQuad)  # Use tweening/easing function to move mouse over 2 seconds.
+pyautogui.moveTo(500, 500, duration=2, tween=pyautogui.easeInOutQuad)
+  # Use tweening/easing function to move mouse over 2 seconds.
 
 pyautogui.write('Hello world!', interval=0.25)  # type with quarter-second pause in between each key
 pyautogui.press('esc')     # Press the Esc key. All key names are in pyautogui.KEY_NAMES
