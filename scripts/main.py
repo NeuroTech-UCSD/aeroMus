@@ -42,7 +42,6 @@ def processing_function(chunk):
     e4 = filter_emg(tripolar_laplacian(chunk[:, 7], chunk[:, 6]), FS)
 
     metric = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
-    print(metric)
     if metric > THRESHOLD:
         return CLENCH_TRUE
     else:
