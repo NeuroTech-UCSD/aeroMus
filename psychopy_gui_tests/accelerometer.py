@@ -17,40 +17,14 @@ buffer_z = []
 
 def lsl_thread():
     global eeg_inlet
-    global prefix 
-    global buffer_x
-    global buffer_y
-    global buffer_z
-    
-    x = 0
-    z = 0
-    
     print('LSL thread awake'); sys.stdout.flush();
 
     
     # Read LSL
-    # end loop after 10 seconds
-    start_time = time.time()
     while True:
         
         sample, times = eeg_inlet.pull_sample()
-        
-        if sample[0] > 0.2: 
-            x = 1
-        elif sample[0] < -0.2:
-            x = -1
-        if sample[2] > 1.2:
-            z = 1
-        elif sample[2] < 0.8:
-            z = -1
-        
-
-        pyautogui.move(x, z)
-        x = 0
-        z = 0
-        elapsed_time = time.time() - start_time
-        if elapsed_time >= 10:
-            break
+        pyautogui.move(sample[0]*12,  sample[1] * 12)
 
 
 
@@ -78,4 +52,4 @@ if __name__ == "__main__":
     lsl.setDaemon(True) 
     lsl.start()
     
-    time.sleep(12)
+    time.sleep(30)
