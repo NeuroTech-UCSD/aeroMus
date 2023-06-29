@@ -87,7 +87,7 @@ def emg_lsl_thread():
 
             # check if clenching, if so ignore all other predictions until not clenching
             if clench: 
-                if prediction != CLENCH_TRUE:
+                if prediction == CLENCH_TRUE:
                     continue
                 else:
                     clench = False 
