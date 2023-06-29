@@ -11,7 +11,6 @@ def lsl_thread():
     global eeg_inlet
     print('LSL thread awake'); sys.stdout.flush();
 
-    
     # Read LSL
     while True:
         sample, times = eeg_inlet.pull_sample()
@@ -35,5 +34,6 @@ if __name__ == "__main__":
     lsl = threading.Thread(target = lsl_thread, args = ())
     lsl.setDaemon(True) 
     lsl.start()
+    
     
     time.sleep(30)

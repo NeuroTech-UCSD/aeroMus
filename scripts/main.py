@@ -16,6 +16,8 @@ import pyautogui
 import pylsl
 import argparse
 from collections import deque
+from ..utils.signal_processing import *
+from ..utils.features import *
 
 acc_inlet = None
 emg_inlet = None
@@ -25,7 +27,23 @@ clench = False
 
 LCLICK = 0
 RCLICK = 1
-CLENCH = 2
+CLENCH_TRUE = 2
+CLENCH_FALSE = 3
+FS = 250
+THRESHOLD = 1200
+
+def processing_function(chunk):
+    chunk = np.array(chunk)
+    e1 = filter_emg(tripolar_laplacian(chunk[:, 1], chunk[:, 0]), FS)
+    e2 = filter_emg(tripolar_laplacian(chunk[:, 3], chunk[:, 2]), FS)
+    e3 = filter_emg(tripolar_laplacian(chunk[:, 5], chunk[:, 4]), FS)
+    e4 = filter_emg(tripolar_laplacian(chunk[:, 7], chunk[:, 6]), FS)
+
+    metric = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
+    if metric > THRESHOLD:
+        return CLENCH_TRUE
+    else:
+        return 0
 
 def acc_lsl_thread():
     """
@@ -62,9 +80,26 @@ def emg_lsl_thread():
         buffer.append(sample)
         if len(buffer) == buffer.maxlen:
             # send to processing pipeline 
-            # do something with output 
-            
+            prediction = processing_function(buffer)
             buffer.clear()
+
+            # check if clenching, if so ignore all other predictions until not clenching
+            if clench: 
+                if prediction != CLENCH_TRUE:
+                    continue
+                else:
+                    clench = False 
+                    continue 
+            # if not clenching, look for other predictions 
+            if prediction == CLENCH_TRUE:
+                pyautogui.click()
+            else:
+                continue
+            '''elif prediction == RCLICK:
+                pyautogui.rightClick()
+            elif prediction == LCLICK:
+                clench = True'''
+
 
 
         
@@ -79,6 +114,7 @@ def validation(time, sensitivity):
 
 if __name__ == "__main__":
     DEQUE_SIZE = 50
+    pyautogui.FAILSAFE = True
 
     # Create an ArgumentParser object
     parser = argparse.ArgumentParser(description='EMG mouse script')
