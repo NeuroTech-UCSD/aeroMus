@@ -5,6 +5,7 @@ import sys
 sys.path.append('../')
 from utils.signal_processing import *
 import pyemgpipeline as pep
+from scipy.signal import butter, iirnotch, firwin, filtfilt, periodogram
 
 def data_from_files(data, metadata, electrodes=[[3,2],[7,6]]):
     sess_data = pd.read_csv(data,header=None)
@@ -28,21 +29,34 @@ def data_from_files(data, metadata, electrodes=[[3,2],[7,6]]):
         category_instances[category].append(instances)
     return category_instances
 
-def plot_emg(cat_dict, category, instance, electrode, plot=True):
+def plot_emg(cat_dict, category, instance, electrode, low=5, high=124, Q=30, plot=True):
     signal = cat_dict[category][instance][electrode]
-    emg = process_signal(signal)
+    emg = process_signal(signal, low, high, Q)
     if plot:
         emg.plot()
         #plt.plot(signal)
         #plt.title(f'{category}: {instance}, electrode {electrode}')
     return emg #signal #
 
-def process_signal(signal):
+def process_signal(signal, low, high, Q):
     signal = np.array(signal)
-    #signal = np.array(signal - signal.mean())
+    if not Q==0:
+        signal = butter_notch(signal,Q)
     emg = pep.wrappers.EMGMeasurement(signal, hz=250)
     emg.apply_dc_offset_remover()
-    emg.apply_bandpass_filter(2,5,124)
+    emg.apply_bandpass_filter(2,low,high)
     #emg.apply_full_wave_rectifier()
     #emg.apply_end_frame_cutter(n_end_frames=50)
     return emg
+
+def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
+    # Define the filter parameters
+    #Q = 30.0
+
+    # Calculate the notch filter coefficients
+    w0 = notch_freq / (Fs / 2)
+    b, a = iirnotch(w0, Q)
+
+    # Apply the filter to the EEG data
+    notched_data = filtfilt(b, a, chan_data)
+    return notched_data
