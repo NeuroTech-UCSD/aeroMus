@@ -283,7 +283,7 @@ def CreateMrkStream():
 if __name__ == "__main__":
     # TODO: updaute two variables here every round 
     # SET GLOBALS 
-    session = 5
+    session = 7
     paradigm_repeats = 5
 
     prefix = "data/emg_recordings/test_sess{}".format(session) # + 'EMG'
