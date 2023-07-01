@@ -12,27 +12,12 @@
 // an MPU9255 object on SPI bus 0 and chip select pin 10
 MPU9255 IMU(SPI, 10);
 
+float accel[3];
+float gyro[3];
+float mag[3];
+
 // IMU registers
 int status;
-
-// Measured IMU data
-float accel[3]; 	// m/s^2
-float gyro[3];		// rad/s
-float mag[3]; 		// uT
-
-// Differential IMU data
-float da[3];		// m/s^2
-float dg[3];		// rad/s
-float dm[3];		// uT
-
-// Estimated Attitude data
-float quat[4];		// Quaternion
-float pos[3];		// m
-float velocity[3];	// m/s
-
-// Time data
-float dt;			// s
-float t;			// s
 
 void setup()
 {
@@ -47,7 +32,6 @@ void setup()
     // start communication with IMU
 	debugln("Initializing IMU");
     status = IMU.begin();
-	debugln("Status Recieved");
     if (status < 0)
     {
         debugln("IMU initialization unsuccessful");
@@ -59,24 +43,30 @@ void setup()
         }
     }
 	
-	debugln("Setting DLPF bandwidth to 20 Hz");
+	debug("Setting digital LPF bandwidth to 20 Hz: ");
     status = IMU.setDlpfBandwidth(MPU9255::DLPF_BANDWIDTH_20HZ);
-	debugln( status > 0 ? "Success" : "Failure" );
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
 
-	debugln("Setting SRD to 19 for a 50 Hz update rate");
-    status = IMU.setSrd(19);
-	debugln( status > 0 ? "Success" : "Failure" );
+	debug("Setting default sdr (19): ");
+    status = IMU.setSrd(DEFAULT_SDR);
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
 
-	debugln("Enabling data ready interrupt");
+	debug("Enabling data ready interrupt: ");
     status = IMU.enableDataReadyInterrupt();
-	debugln( status > 0 ? "Success" : "Failure" );
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
+
+	calibrateIMU();
 
 	debugln("Setting interrupt pin active high");
-    pinMode(0, INPUT);
+    pinMode(2, INPUT);
     attachInterrupt(0, getIMU, RISING);
+	// pinMode(3, INPUT);
+	// attachInterrupt(1, calibrateIMU, RISING);
 
 	debugln("IMU initialized successfully");
+	
 }
+
 
 void loop() {
 	
@@ -86,24 +76,32 @@ void getIMU()
 {
     // read the sensor
     IMU.readSensor();
-    // // display the data
-    // debug2(IMU.getAccelX_mss(), 6);
-    // debug("\t");
-    // debug2(IMU.getAccelY_mss(), 6);
-    // debug("\t");
-    // debug2(IMU.getAccelZ_mss(), 6);
-    // debug("\t");
-    // debug2(IMU.getGyroX_rads(), 6);
-    // debug("\t");
-    // debug2(IMU.getGyroY_rads(), 6);
-    // debug("\t");
-    // debug2(IMU.getGyroZ_rads(), 6);
-    // debug("\t");
-    // debug2(IMU.getMagX_uT(), 6);
-    // debug("\t");
-    // debug2(IMU.getMagY_uT(), 6);
-    // debug("\t");
-    // debug2(IMU.getMagZ_uT(), 6);
-    // debug("\t");
-    // debugln2(IMU.getTemperature_C(), 6);
+	
+	// get the data
+	IMU.update();
+
+	float rpy[3];
+	IMU.getRPY(rpy);
+
+	debug("Roll: ");
+	debug2(rpy[0], 6);
+	debug(", Pitch: ");
+	debug2(rpy[1], 6);
+	debug(", Yaw: ");
+	debugln2(rpy[2], 6);
+}
+
+void calibrateIMU()
+{
+	debugln("Calibrating IMU");
+	debug("Now calibrating accelerometer: ");
+	status = IMU.calibrateAccel();
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
+	debug("Now calibrating gyroscope: ");
+	status = IMU.calibrateGyro();
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
+	debug("Now calibrating magnetometer: ");
+	status = IMU.calibrateMag();
+	debugln( status > 0 ? "Success" : "Failure! Exit code: " + status );
+	debugln("Calibration complete");
 }
