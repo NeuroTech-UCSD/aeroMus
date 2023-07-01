@@ -200,8 +200,9 @@ def CreateSequence(n):
     # Relaxed will always be between other movements
 
     # change movements here
-    movements = ['FLEX WRIST', 'EXTEND WRIST', 'PRONATE WRIST', 'SUPINATE WRIST', 'CLENCH FIST',
-    			'EXTEND THUMB', 'EXTEND INDEX', 'EXTEND PINKY', 'PINCH']
+    #movements = ['FLEX WRIST', 'EXTEND WRIST', 'PRONATE WRIST', 'SUPINATE WRIST', 'CLENCH FIST',
+    #			'EXTEND THUMB', 'EXTEND INDEX', 'EXTEND PINKY', 'PINCH']
+    movements = ['CLENCH FIST', 'WRIST UP', 'WRIST DOWN', 'SNAP']
 
     seq = movements*n
     # for i in ['Clench','Tinca']:
@@ -282,10 +283,10 @@ def CreateMrkStream():
 if __name__ == "__main__":
     # TODO: updaute two variables here every round 
     # SET GLOBALS 
-    session = 1
-    paradigm_repeats = 10
+    session = 7
+    paradigm_repeats = 5
 
-    prefix = "/Users/soysa/Documents/Git/Project-TNNI-ACD/data/emg_recordings/test_sess{}".format(session) # + 'EMG'
+    prefix = "data/emg_recordings/test_sess{}".format(session) # + 'EMG'
 
 
     # Create PsychoPy window
@@ -293,7 +294,7 @@ if __name__ == "__main__":
         screen = 0,
         size=[win_w, win_h],
         units="pix",
-        fullscr=True,
+        fullscr=False,
         color=bg_color,
         gammaErrorPolicy = "ignore"
     );
