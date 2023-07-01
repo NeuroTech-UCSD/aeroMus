@@ -115,9 +115,9 @@ def Paradigm(n):
         
         # Cycle through 4 beats (120bpm) of the metronome. On final, change sequence
         # Make it 8 beats for rests
-        nbeats = 1
-        if sequence[i] == 'REST' or sequence[i] == 'HOLD': #changed from C to U ***********************
-            nbeats = 4
+        nbeats = 2
+        #if sequence[i] == 'REST' or sequence[i] == 'HOLD': #changed from C to U ***********************
+        #    nbeats = 1 #changed from 4
         for count in range(nbeats, 0, -1):
             # Set metronome
             met.text = f'{count}'
@@ -193,7 +193,7 @@ def CreateSequence(n):
     # change movements here
     #movements = ['FLEX WRIST', 'EXTEND WRIST', 'PRONATE WRIST', 'SUPINATE WRIST', 'CLENCH FIST',
     #			'EXTEND THUMB', 'EXTEND INDEX', 'EXTEND PINKY', 'PINCH']
-    movements = ['CLENCH FIST', 'WRIST UP', 'WRIST DOWN', 'SNAP']
+    movements = ['CLENCH FIST','SNAP']
 
     seq = movements*n
     # for i in ['Clench','Tinca']:
@@ -206,7 +206,7 @@ def CreateSequence(n):
     # Iterate through shuffled seq and add relaxed
     seq_ = []
     for s in seq:
-       seq_.extend(['REST', s, 'HOLD', 'STOP']) #changed from C to U to Re ***********************
+       seq_.extend(['REST', s])#'HOLD', 'STOP']) #changed from C to U to Re ***********************
         
     seq = None
 
@@ -274,8 +274,8 @@ def CreateMrkStream():
 if __name__ == "__main__":
     # TODO: updaute two variables here every round 
     # SET GLOBALS 
-    session = 7
-    paradigm_repeats = 5
+    session = 8
+    paradigm_repeats = 10
 
     prefix = "data/emg_recordings/test_sess{}".format(session) # + 'EMG'
 
