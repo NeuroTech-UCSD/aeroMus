@@ -12,10 +12,9 @@ import sys
 
 # custom functions
 sys.path.append('utils')
-#from process_data_online import *
 from signal_processing import *
 from features import *
-from process_data_online import *
+#from process_data_online import *
 
 # Global variables
 my_window = None
@@ -32,7 +31,7 @@ import pandas as pd
 import sys
 import pyemgpipeline as pep
 from scipy.signal import butter, iirnotch, firwin, filtfilt, periodogram
-'''
+
 def classify_motion(chunk, rest_peaks, threshold=8):
     proc_chunk = process_chunk(chunk)
     chunk_peaks = find_peaks(proc_chunk)
@@ -86,7 +85,7 @@ def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
     # Apply the filter to the EEG data
     notched_data = filtfilt(b, a, chan_data)
     return notched_data
-'''
+
 #========================================================
 # High Level Functions
 #========================================================
@@ -178,7 +177,7 @@ if __name__ == "__main__":
         
         # classify
         # metric = mean_absolute_value(e1)
-        print(metric)
+        print(mav_metric)
         
         #motion = classify_motion(chunk, rest_peaks, threshold=4)
         #if motion:
