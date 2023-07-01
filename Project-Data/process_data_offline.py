@@ -19,6 +19,7 @@ def data_from_files(data, metadata, electrodes=[[3,2],[7,6]]):
         for electrode in electrodes:
             all_electrodes += electrode
         channels = sess_data.loc[(sess_data[0] >= start_time) & (sess_data[0] < end_time)].iloc[:,all_electrodes]
+
         instances = pd.DataFrame()
         for i,pair in enumerate(electrodes):
             instances[f'e{i+1}'] = tripolar_laplacian(channels[pair[0]],pair[1])
@@ -29,7 +30,7 @@ def data_from_files(data, metadata, electrodes=[[3,2],[7,6]]):
         category_instances[category].append(instances)
     return category_instances
 
-def plot_emg(cat_dict, category, instance, electrode, low=5, high=124, Q=30, plot=True):
+def plot_emg(cat_dict, category, instance, electrode, low=5, high=124, Q=30, num_frames=50, plot=True):
     signal = cat_dict[category][instance][electrode]
     emg = process_signal(signal, low, high, Q)
     if plot:
@@ -38,7 +39,7 @@ def plot_emg(cat_dict, category, instance, electrode, low=5, high=124, Q=30, plo
         #plt.title(f'{category}: {instance}, electrode {electrode}')
     return emg #signal #
 
-def process_signal(signal, low, high, Q):
+def process_signal(signal, low, high, Q, num_frames):
     signal = np.array(signal)
     if not Q==0:
         signal = butter_notch(signal,Q)
@@ -47,7 +48,7 @@ def process_signal(signal, low, high, Q):
     emg.apply_bandpass_filter(2,low,high)
     #emg.apply_amplitude_normalizer(100)
     emg.apply_full_wave_rectifier()
-    #emg.apply_end_frame_cutter(n_end_frames=50)
+    emg.apply_end_frame_cutter(n_end_frames=num_frames)
     return emg
 
 def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
