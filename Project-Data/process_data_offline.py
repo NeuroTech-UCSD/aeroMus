@@ -47,7 +47,7 @@ def process_signal(signal, low, high, Q):
     emg.apply_bandpass_filter(2,low,high)
     #emg.apply_amplitude_normalizer(100)
     emg.apply_full_wave_rectifier()
-    emg.apply_end_frame_cutter(n_end_frames=50)
+    #emg.apply_end_frame_cutter(n_end_frames=50)
     return emg
 
 def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
