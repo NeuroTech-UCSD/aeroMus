@@ -3,8 +3,8 @@ pygame
 pylsl
 pyautogui
 pandas 
-liblsl
 numpy
 scipy
 jupyterlab
 pyemgpipeline
+pickle

@@ -1,18 +1,9 @@
-# 6-class EMG paradigm
-#
-# 1. Fingers extended (relaxed)
-# 2. Fingers clenched
-# 3. L. Planar movement
-# 4. R. Planar movement
-# 5. U. Planar movement
-# 6. D. Planar movement
-#
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!! MAKE SURE refresh_rate IS SET TO YOUR MONITOR'S REFRESH RATE !!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#
+# Description: This script implements the EMG task data collection paradigm.
+# Please adjust the global variables below to your needs.
+#--------------------------------------------------------
 # Created........: 04Feb2022 [ollie-d]
-# Last Modified..: 04Feb2022 [ollie-d]
+# Adapted.......: June2022 [joelle-f]
+
 
 
 

@@ -1,3 +1,7 @@
+# Description: This file contains the code for the classification
+#              task. It is a modified version of the EMG task.
+#
+
 import time
 import pylsl
 import random
