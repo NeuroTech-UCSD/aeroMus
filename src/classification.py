@@ -23,7 +23,7 @@ win_w = 800
 win_h = 600
 eeg_inlet = None
 FS = 250
-THRESHOLD = 8
+THRESHOLD = 80
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -172,7 +172,7 @@ if __name__ == "__main__":
         metric = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
         '''
         proc_chunk = process_chunk(chunk)
-        mav_metric = np.mean([mean_absolute_value(proc_chunk[:,i]) for i in range(proc_chunk.shape[1])])
+        mav_metric = np.max([mean_absolute_value(proc_chunk[:,i]) for i in range(proc_chunk.shape[1])]) #take max instead of mean
         # can take mean over multiple electrodes
         
         # classify
