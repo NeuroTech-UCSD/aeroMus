@@ -1,8 +1,9 @@
 # TNNI-Mouse: Triton NeuroTech Neural Interface Aided Control of Computer Displays
 
-## No surface, no constraints, the EMG computer mouse 
-Ever wish you could reach the third dimension which you as a human are entitled to? Do you spends hundreds of dollars on ergonomic computing wear? 
-#TODO make sales pitch and project overview
+## No surface, no constraints: The EMG computer mouse 
+Do you spends hundreds of dollars on ergonomic computing wear? Ever wish you could reach the third dimension which you as a human are entitled to?
+
+In today's era of advanced technology, the traditional computer mouse can seem a bit archaic. Issues like hand cramping, neck pain, and limitations for those with restricted mobility are calling for a change. That's why we've embarked on a journey to build a low-cost, 4-channel neural interface EMG input device, a helpful tool that promises to overcome these limitations. Our project's goal is simple yet ambitious: To make brain-computer interfaces more accessible. To this end, we've designed an EMG armband that collects signals from muscle contractions.
 
 ## Video 
 <todo add link>
@@ -13,7 +14,7 @@ Ever wish you could reach the third dimension which you as a human are entitled 
 ### Hardware 
 Equipment:
 - OpenBCI Cyton 
-- HiLetGo <insert info> Accelerometer 
+- HiLetGo MPU-9250 Accelerometer 
 - TNNI armband and electrodes (Make it yourself with the specs in `/directory`)  #TODO ADD path
 
 Set up 
