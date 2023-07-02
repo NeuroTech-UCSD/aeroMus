@@ -23,7 +23,7 @@ win_w = 800
 win_h = 600
 eeg_inlet = None
 FS = 250
-THRESHOLD = 450
+THRESHOLD = 8
 
 import numpy as np
 import matplotlib.pyplot as plt
