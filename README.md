@@ -63,8 +63,8 @@ Written in Python and C, our software interprets all the inputs from the EMG arm
   	- [`/psychopy_gui_tests/accelerometer.py`]() -
 - [`/scripts`]() Each script is for a particular processing stage.
 	- [`/scripts/main.py`]() - The script that runs the entire project pipeline, combining all of the processing scripts.
-  	- [`/scripts/preprocessing.py`]() - 
-      	- [`/scripts/analysis.py`]() - 
+  	- [`/scripts/preprocessing.py`]() -
+  	- [`/scripts/analysis.py`]() - 
 - [`/src`]() Modular code files that are meant to be imported by different scripts.
 	- [`/src/classification.py`]() - 
 	- [`/src/emg_task0.py`](h) - 
