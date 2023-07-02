@@ -12,9 +12,9 @@ import sys
 
 # custom functions
 sys.path.append('utils')
-#from process_data_online import *
 from signal_processing import *
 from features import *
+#from process_data_online import *
 
 # Global variables
 my_window = None
@@ -23,7 +23,7 @@ win_w = 800
 win_h = 600
 eeg_inlet = None
 FS = 250
-THRESHOLD = 450
+THRESHOLD = 8
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -85,6 +85,7 @@ def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
     # Apply the filter to the EEG data
     notched_data = filtfilt(b, a, chan_data)
     return notched_data
+
 #========================================================
 # High Level Functions
 #========================================================
@@ -141,45 +142,46 @@ if __name__ == "__main__":
     cur = visual.TextStim(my_window, text='X', units='norm', alignText='center')
     cur.setHeight(0.1)
     cur.pos = (0, 0)
-    
+    '''
     rest_peaks = np.zeros((4,))
     for i in range(6):
         chunk, timestamps = eeg_inlet.pull_chunk(timeout=0.5)
         #chunk = np.array(chunk)
         rest_peaks += find_peaks(process_chunk(chunk))
-        ''''
         e1 = filter_emg(tripolar_laplacian(chunk[:, 1], chunk[:, 0]), FS)
         e2 = filter_emg(tripolar_laplacian(chunk[:, 3], chunk[:, 2]), FS)
         e3 = filter_emg(tripolar_laplacian(chunk[:, 5], chunk[:, 4]), FS)
         e4 = filter_emg(tripolar_laplacian(chunk[:, 7], chunk[:, 6]), FS)
-        '''
         #THRESHOLD = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
     rest_peaks = rest_peaks/6
     print(rest_peaks)
-    
+    '''
     # Read LSL
     while True:
         chunk, timestamps = eeg_inlet.pull_chunk(timeout=0.5)
 
         # process signal
-        #chunk = np.array(chunk)
         '''
+        chunk = np.array(chunk)
+        
         e1 = filter_emg(tripolar_laplacian(chunk[:, 1], chunk[:, 0]), FS)
         e2 = filter_emg(tripolar_laplacian(chunk[:, 3], chunk[:, 2]), FS)
         e3 = filter_emg(tripolar_laplacian(chunk[:, 5], chunk[:, 4]), FS)
         e4 = filter_emg(tripolar_laplacian(chunk[:, 7], chunk[:, 6]), FS)
-
+        
         metric = np.mean([mean_absolute_value(x) for x in [e1, e2, e3, e4]])
+        '''
+        proc_chunk = process_chunk(chunk)
+        mav_metric = np.mean([mean_absolute_value(proc_chunk[:,i]) for i in range(proc_chunk.shape[1])])
         # can take mean over multiple electrodes
         
         # classify
         # metric = mean_absolute_value(e1)
-        print(metric)
-        '''
-        motion = classify_motion(chunk, rest_peaks, threshold=4)
+        print(mav_metric)
+        
+        #motion = classify_motion(chunk, rest_peaks, threshold=4)
         #if motion:
-        #if metric > 2*THRESHOLD:
-        if motion:
+        if mav_metric > THRESHOLD:
             cur.text = 'CLENCH'
         else:
             cur.text = 'REST'
