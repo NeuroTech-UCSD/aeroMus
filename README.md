@@ -78,6 +78,7 @@ Written in Python and C, our software interprets all the inputs from the EMG arm
 
 ## Acknowledgements
 We’d like to thank everyone who made this project possible and NeuroTechX for hosting this competition!
+Shout out to Ollie - Thank you for letting us borrow your Cyton! 
 
 **Our team members:**</br>
 Joelle Faybishenko</br>
@@ -91,4 +92,10 @@ William Zhang</br>
 Akhil Subbarao</br>
 Edward </br>
 
-Shout out to Ollie - Thank you for letting us borrow your Cyton!
+We would also like to thank everyone worked on the following papers and made them available to us:
+
+Makeyev O, Ye-Lin Y, Prats-Boluda G, Garcia-Casado J. Comprehensive Optimization of the Tripolar Concentric Ring Electrode Based on Its Finite Dimensions Model and Confirmed by Finite Element Method Modeling. Sensors. 2021; 21(17):5881. https://doi.org/10.3390/s21175881
+
+Makeyev O, Besio WG. Improving the Accuracy of Laplacian Estimation with Novel Variable Inter-Ring Distances Concentric Ring Electrodes. Sensors. 2016; 16(6):858. https://doi.org/10.3390/s16060858
+
+Wang K, Parekh U, Pailla T, Garudadri H, Gilja V, Ng TN. Stretchable Dry Electrodes with Concentric Ring Geometry for Enhancing Spatial Resolution in Electrophysiology. Adv Healthc Mater. 2017;6(19):10.1002/adhm.201700552. doi:10.1002/adhm.201700552
