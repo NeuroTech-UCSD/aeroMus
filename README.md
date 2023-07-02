@@ -15,7 +15,7 @@ In today's era of advanced technology, the traditional computer mouse can seem a
 Equipment:
 - OpenBCI Cyton 
 - HiLetGo MPU-9250 Accelerometer 
-- TNNI armband and electrodes (Make it yourself with instructions found <a href="https://www.notion.so/Setting-up-the-armband-v1-cedfd5e207a040f49cadb870782e4840">here</a>
+- TNNI armband and electrodes (Make it yourself with instructions found <a href="https://www.notion.so/Setting-up-the-armband-v1-cedfd5e207a040f49cadb870782e4840">here</a>)
 	- View additional electode designs and corresponding CAD files <a href="https://www.notion.so/Electrode-designs-testing-02a77889273f4634abf1a4feb5045396#66735a91fc4a40858078af40cb69c2ef">here</a>
 
 Set up:
