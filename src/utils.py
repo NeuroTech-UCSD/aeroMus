@@ -10,6 +10,10 @@ Notes: (optional)
 import numpy as np
 import json
 from os.path import join as pjoin
+import serial
+from time import sleep
+import time
+import matplotlib.pyplot as plt
 
 ##########################################################################
 ##########################################################################
