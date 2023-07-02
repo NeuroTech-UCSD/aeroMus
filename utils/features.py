@@ -51,7 +51,7 @@ def median_frequency(power, freqs):
     
     return mdf
 
-def calculate_average_power(power, freqs, n):
+def calculate_average_power(power, freqs, n=5):
     num_bands = n
     band_power = []
     band_size = len(freqs) // num_bands
