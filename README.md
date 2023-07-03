@@ -8,7 +8,11 @@ In today's era of advanced technology, the traditional computer mouse can seem a
 
 
 ## Video 
-<todo add link>
+</br>
+
+[![PRESENTATION VIDEO](figures/youtube.png)](https://www.youtube.com/watch?v=JHjZnrZFi4o)
+
+</br>
 
 
 ## Getting started 
