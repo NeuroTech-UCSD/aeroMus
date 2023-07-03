@@ -1,10 +1,5 @@
 """
-TODO: fix description
 This script runs the entire project pipeline
-Notes:
-- requires calibration.py, preprocessing.py, analysis.py ...
-- run by typing 'python main.py' in the terminal or console
-- ...
 """
 
 ## IMPORTS
@@ -26,14 +21,9 @@ from features import *
 acc_inlet = None
 emg_inlet = None
 scale = 1
-buffer = None
 stop = False
 calibrate = None
 
-LCLICK = 0
-RCLICK = 1
-CLENCH_TRUE = 2
-CLENCH_FALSE = 3
 FS = 250
 THRESHOLD = 50
 
@@ -104,6 +94,11 @@ def butter_notch(chan_data, Q, Fs=250, notch_freq=60.0):
 
 
 def processing_function(chunk):
+    """
+    Processes the chunk of data by applying tripolar laplacian, filtering, and rectification.
+    Parameters:
+    - chunk: Chunk of EMG data
+    """
     proc_chunk = process_chunk(chunk)
     mav_metric = np.max([mean_absolute_value(proc_chunk[:,i]) for i in range(proc_chunk.shape[1])])
     print(mav_metric)
@@ -114,7 +109,7 @@ def processing_function(chunk):
     
 def get_baseline():
     """
-    This thread reads the accelerometer LSL stream and moves the mouse accordingly
+    This thread reads the accelerometer LSL stream and creates a baseline for ACC normalization
     """
     global acc_inlet
     global calibrate
@@ -128,11 +123,6 @@ def get_baseline():
     while time.time()-start<6:
         sample, times = acc_inlet.pull_sample()
         data.append([sample[0],sample[1]])
-        
-    #print('Clench hand but keep still')
-    '''while time.time()-start<7:
-        sample, times = acc_inlet.pull_sample()
-        data.append([sample[0],sample[1]])'''
     
     calibrate = np.mean(np.array(data),axis=0)
     
@@ -177,7 +167,6 @@ def emg_lsl_thread():
     This thread reads the emg LSL stream and moves the mouse accordingly
     """
     global emg_inlet
-    global buffer
     global stop
 
     print('LSL thread awake'); sys.stdout.flush();
@@ -188,37 +177,17 @@ def emg_lsl_thread():
         if stop==True:
             continue
         chunk, times = emg_inlet.pull_chunk(timeout=0.5)
-        #print(len(chunk),len(chunk[0]))
-        #prediction = processing_function(buffer)
         if processing_function(chunk):
-            print('click')
             pyautogui.click()
 
-            # check if clenching, if so ignore all other predictions until not clenching
-            ''' #rework this logic - confusing. should just (left) click if clench is true
-            if clench: 
-                if prediction == CLENCH_TRUE:
-                    continue
-                else:
-                    clench = False 
-                    print("Resting")
-                    continue 
-            # if not clenching, look for other predictions 
-            if prediction == CLENCH_TRUE:
-                clench = True
-                print("Clenching")
-            else:
-                continue
-            elif prediction == RCLICK:
-                pyautogui.rightClick()
-            elif prediction == LCLICK:
-                clench = True
-            '''
 
 
 
         
 def validation(runtime, sensitivity):
+    """
+    Validates the runtime and sensitivity parameters.
+    """
     assert runtime > 0, "Time must be greater than 0"
     assert sensitivity > 0, "Sensitivity must be greater than 0"
     return True
@@ -248,8 +217,7 @@ if __name__ == "__main__":
     validation(runtime, sensitivity)
 
     # Set global variables 
-    scale = sensitivity * 5 
-    buffer = deque(maxlen=DEQUE_SIZE)
+    scale = sensitivity * 5     
 
     # initialize pyautogui window and set cursor in middle
     screenWidth, screenHeight = pyautogui.size()
@@ -268,7 +236,6 @@ if __name__ == "__main__":
     
     # Get accelerometer baseline 
     get_baseline()
-    
     
     
     # Launch accelerometer LSL thread
