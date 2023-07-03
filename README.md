@@ -1,4 +1,4 @@
-# aeroMus: Triton NeuroTech Neural Interface Aided Control of Computer Displays
+# aeroMus: Triton NeuroTech's Control of Computer Displays
 
 ## No surface, no constraints, the EMG computer mouse 
 AeroMus provides a new level of flexibility. No longer tied to a desk, you can control your computer from anywhere. It allows you to interact with your device in a way that is most comfortable and natural for you. From laying down and browsing the web or controlling VR games with a wave of a hand, aeroMus has applications for everyone.
