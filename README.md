@@ -91,7 +91,7 @@ Edward McGee </br>
 We would also like to thank everyone worked on the following papers and packages and made them available to us:
 
 [`PyAutoGui`](https://github.com/asweigart/pyautogui/tree/master)
-[`pyemgpipeline](https://github.com/aalhossary/pyemgpipeline)
+[`pyemgpipeline`](https://github.com/aalhossary/pyemgpipeline)
 
 Makeyev O, Ye-Lin Y, Prats-Boluda G, Garcia-Casado J. Comprehensive Optimization of the Tripolar Concentric Ring Electrode Based on Its Finite Dimensions Model and Confirmed by Finite Element Method Modeling. Sensors. 2021; 21(17):5881. https://doi.org/10.3390/s21175881
 
