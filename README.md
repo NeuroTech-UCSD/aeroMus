@@ -35,7 +35,6 @@ git clone https://github.com/NeuroTech-UCSD/Project-TNNI-ACD.git
 ```
 Download the dependencies
 ```
-cd TNNI-ACD
 pip install -r requirements.txt
 ```
 And run the code! 
@@ -84,13 +83,13 @@ Shout out to Ollie - Thank you for letting us borrow your Cyton!
 **Our team members:**</br>
 Aidan Truel</br>
 Joelle Faybishenko</br>
+Sawyer Figueroa</br>
 Cassia Rizq</br>
 Nakshatra Bansal</br>
-Sawyer Figueroa</br>
 Lea Winner</br>
-William Zhang</br>
 Akhil Subbarao</br>
 Edward McGee </br>
+William Zhang</br>
 
 We would also like to thank everyone worked on the following papers and packages and made them available to us:
 
